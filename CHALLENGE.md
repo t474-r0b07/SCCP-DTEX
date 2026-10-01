@@ -92,7 +92,7 @@ you found it.
     you understand why GPS spoofing detection
     is not a feature. it's a requirement.
 
-    >> https://www.youtube.com/@t474-r0b07
+    >> https://www.youtube.com/@Tata_Robot
 ```
 
 ---

@@ -22,7 +22,7 @@ $ cat /etc/mission
 > Módulo: DTEX — Operaciones Externas
 > Estado: [DESARROLLO / TESTING] ████████░░ 80%
 > Surfaces: WebApp · Android Custodio · Android Supervisor
-> Latency: <1s · Real-time · Level: TACTICAL
+> Realtime · operaciones tácticas · Level: TACTICAL
 ```
 
 ---
@@ -68,7 +68,7 @@ inconsistencias/         WebApp        IMPLEMENTADO    Filters · PIN resolution
 partes_sorpresa/         WebApp        IMPLEMENTADO    States · expiration · responses
 oficiales/               WebApp        IMPLEMENTADO    ALFA/BRAVO grid · telemetry · glow
 auth/                    WebApp        IMPLEMENTADO    Shuffled PinPad · login logs · roles
-realtime/                WebApp        IMPLEMENTADO    Supabase subscriptions · <1s latency
+realtime/                WebApp        IMPLEMENTADO    Supabase subscriptions
 dtex_custodio/           Android       IMPLEMENTADO  GPS · reports · radio · telemetría
 dtex_supervisor/         Android       IMPLEMENTADO  Mobile command · alerts · live map
 ```
@@ -88,14 +88,14 @@ FRONTEND
 BACKEND
   Supabase — PostgreSQL + Realtime
   Autenticación propia · tabla allowed_admins
-  Políticas RLS · registros de auditoría
-  Supabase Storage       → fotos · partes
+  Supabase Auth · allowlist · roles · PIN de director
+  Registros de autenticación y alertas operativas
 
 ARQUITECTURA
-  Clean Architecture
+  Organización por capas
   ├─ Presentation  →  Views + GetX Controllers
-  ├─ Domain        →  Entities + Use Cases
-  └─ Data          →  Models + Supabase Repository
+  ├─ Data          →  Models + Repositories
+  └─ Core          →  servicios, constantes y utilidades
 
 UI / UX
   Glassmorphism · BackdropFilter sigma: 15
@@ -126,7 +126,7 @@ Shoulder Surf   →  Random shuffle PinPad on every use
 Unauth access   →  Supabase Auth + allowlist de administradores + PIN para funciones de director
 Escalation      →  Strict SUPERVISOR / DIRECTOR roles
 Señal GPS       →  Validación de precisión, saltos, velocidad y ubicación simulada
-Traceability    →  Full audit trail with timestamps
+Traceability    →  registros de autenticación y alertas
 ```
 
 > *Construido con pensamiento ofensivo. Cada función responde a una amenaza concreta.*

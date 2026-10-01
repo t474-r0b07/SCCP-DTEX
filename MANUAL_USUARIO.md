@@ -1,344 +1,141 @@
-# MANUAL DE USUARIO
-## SCCP Command Center v1.0
+# MANUAL DE USUARIO — SCCP-DTEX
 
----
+## 1. Alcance
 
-## 📋 ÍNDICE
+SCCP-DTEX reúne una superficie web de comando y dos superficies Android especializadas:
 
-1. [Introducción](#introducción)
-2. [Acceso al Sistema](#acceso-al-sistema)
-3. [Dashboard Principal](#dashboard-principal)
-4. [Módulo de Inconsistencias](#módulo-de-inconsistencias)
-5. [Módulo de Partes Sorpresa](#módulo-de-partes-sorpresa)
-6. [Módulo de Oficiales](#módulo-de-oficiales)
-7. [Funciones Avanzadas](#funciones-avanzadas)
-8. [Resolución de Problemas](#resolución-de-problemas)
+- **Web Command Center** — supervisión y operación desde navegador.
+- **DTEX Custodio** — operación de campo.
+- **DTEX Supervisor** — supervisión móvil y coordinación.
 
----
+El repositorio está en **desarrollo/testing**. Este manual describe la funcionalidad representada actualmente por el código; no constituye una especificación de despliegue operativo.
 
-## 1. INTRODUCCIÓN
+## 2. Acceso y roles
 
-### 1.1 Descripción General
-SCCP Command Center es un sistema táctico de control y custodia policial diseñado con interfaz HUD militar para supervisión en tiempo real de oficiales, detección de inconsistencias y gestión de partes sorpresa.
+La aplicación utiliza Supabase Auth y una capa adicional de autorización para usuarios administrativos.
 
-### 1.2 Características Principales
-- ✅ Autenticación segura con PIN aleatorio
-- 🔄 Actualización en tiempo real
-- 📊 Dashboard táctico con estadísticas visuales
-- ⚠️ Sistema de alertas por prioridad
-- 🔐 Resolución autorizada de inconsistencias
-- 👥 Gestión de oficiales por grupos
+El controlador de autenticación contempla:
 
----
+- restauración de sesión;
+- inicio y cierre de sesión;
+- validación contra la allowlist de administradores;
+- roles de supervisor y director;
+- verificación adicional mediante PIN para funciones de director;
+- registro de eventos de autenticación.
 
-## 2. ACCESO AL SISTEMA
+Los permisos efectivos dependen de la configuración del backend.
 
-### 2.1 Pantalla de Login
+## 3. Command Center Web
 
-1. **Ingresar Email**
-   - Introducir email de administrador autorizado
-   - Presionar `CONTINUAR` o `Enter`
+La entrada web es `lib/main.dart`.
 
-2. **Ingresar PIN de Seguridad**
-   - Aparecerá un teclado numérico con números aleatorios (shuffled)
-   - Los números cambian de posición en cada sesión por seguridad
-   - Ingresar PIN de 4 dígitos
-   - El sistema valida automáticamente
+La navegación incluye superficies para dashboard, inconsistencias, partes, oficiales y funciones DTEX.
 
-3. **Acceso Exitoso**
-   - Redirige al Dashboard principal
-   - Registra el login en `login_logs`
+La interfaz utiliza mapas, indicadores, tarjetas operativas y componentes de actualización de datos.
 
-### 2.2 Niveles de Acceso
-- **SUPERVISOR**: Acceso completo a monitoreo y resolución
-- **DIRECTOR**: Acceso total incluyendo configuración
+## 4. DTEX Custodio
 
----
+La entrada Android es `lib/main_custodio.dart`.
 
-## 3. DASHBOARD PRINCIPAL
+La superficie está orientada a operaciones de campo y contiene componentes relacionados con:
 
-### 3.1 Barra Superior (Header)
+- misiones;
+- ubicación;
+- seguimiento GPS;
+- radio operativa;
+- alertas;
+- reportes;
+- telemetría;
+- cámara;
+- notificaciones.
 
-**Elementos:**
-- Logo SCCP con ícono de seguridad
-- Nombre del administrador activo
-- Fecha y hora actual
-- Botón de actualización (⟳)
-- Botón de cierre de sesión (⎋)
+El servicio `DtexAndroidTrackingService` gestiona el ciclo de seguimiento y aplica reglas para precisión, saltos de posición, velocidad y estado de la ubicación.
 
-### 3.2 Navegación
+## 5. DTEX Supervisor
 
-**Pestañas disponibles:**
-1. **DASHBOARD** - Vista general
-2. **INCONSISTENCIAS** - Gestión de alertas
-3. **PARTES** - Partes sorpresa
-4. **OFICIALES** - Personal activo
+La entrada Android es `lib/main_dtex_supervisor.dart`.
 
-### 3.3 Tarjetas de Estadísticas
+Esta superficie está orientada a supervisión y coordinación. Comparte backend con la superficie de custodio, pero mantiene una interfaz y un punto de entrada independientes.
 
-**Métrica 1: OFICIALES ACTIVOS**
-- Contador total de oficiales activos
-- Desglose por grupo (Alfa/Bravo)
-- Color: Cyan (#00FFD1)
+## 6. Misiones
 
-**Métrica 2: ALERTAS CRÍTICAS**
-- Reportes en estado CRÍTICO
-- Cantidad de alertas intermedias
-- Color: Rojo (#FF3B3B)
+Las operaciones DTEX trabajan alrededor de misiones y destinos.
 
-**Métrica 3: INCONSISTENCIAS**
-- Inconsistencias abiertas
-- En revisión
-- Color: Naranja (#FFAA00)
+Dependiendo del flujo, el sistema puede:
 
-**Métrica 4: PARTES PENDIENTES**
-- Partes sin completar
-- Partes vencidos (>2 horas)
-- Color: Rosa (#FF006E)
+1. crear o consultar una misión;
+2. asociar un custodio;
+3. generar o validar un mecanismo OTP;
+4. iniciar seguimiento;
+5. recibir posiciones;
+6. generar alertas ante determinadas condiciones;
+7. actualizar el estado de la misión;
+8. cerrar la operación.
 
-### 3.4 Alertas Recientes
+La disponibilidad exacta de cada acción depende del rol y del estado de la misión.
 
-Lista de las 5 inconsistencias más críticas:
-- Ícono según tipo
-- Descripción breve
-- Badge de prioridad con efecto pulse
-- Al hacer clic: Ver detalles completos
-
----
-
-## 4. MÓDULO DE INCONSISTENCIAS
-
-### 4.1 Filtros Disponibles
+## 7. Seguimiento GPS
 
-**Barra de filtros:**
-- `TODOS` - Todas las inconsistencias
-- `ABIERTA` - Pendientes de revisión
-- `EN_REVISION` - Siendo evaluadas
-- `JUSTIFICADA` - Con justificación del oficial
-- `CERRADA` - Resueltas
+El seguimiento considera, entre otros factores:
 
-Cada filtro muestra contador en tiempo real.
+- precisión reportada;
+- saltos de coordenadas;
+- velocidad;
+- desviación respecto al destino;
+- estado del servicio de ubicación;
+- batería;
+- conectividad.
 
-### 4.2 Tarjetas de Inconsistencia
+El comportamiento real también depende de Android, permisos concedidos y condiciones del dispositivo.
 
-**Información mostrada:**
-1. **Cabecera**
-   - Ícono del tipo (GPS, Batería, etc.)
-   - Tipo de inconsistencia
-   - Badge de prioridad (BAJA/MEDIA/ALTA/CRÍTICA)
+## 8. Alertas y telemetría
 
-2. **Detalles**
-   - ID del oficial involucrado
-   - Descripción completa del evento
-   - Estado actual
-   - Fecha y hora de detección
-
-3. **Justificación** (si existe)
-   - Comentario del oficial
-   - Ícono de comentario
-
-### 4.3 Tipos de Inconsistencias
+El sistema contempla alertas operativas y datos de telemetría asociados al seguimiento.
 
-| Tipo | Ícono | Descripción |
-|------|-------|-------------|
-| GPS_FALSO | 📍 | GPS simulado o falseado |
-| BATERIA_BAJA | 🔋 | Nivel crítico de batería |
-| FUERA_ZONA | 🚫 | Fuera del área asignada |
-| SIN_MOVIMIENTO | ⏸ | Sin actividad prolongada |
-| DISTANCIA_EXCEDIDA | 📏 | Distancia anormal del reo |
-| FALTA_REPORTE | 📋 | Reporte no enviado |
-
-### 4.4 Resolver Inconsistencia
-
-**Proceso:**
-1. Hacer clic en tarjeta de inconsistencia
-2. Se abre diálogo modal
-3. Revisar información completa
-4. Ingresar PIN de autorización (shuffled)
-5. Sistema valida PIN
-6. Si es correcto: Marca como CERRADA
-7. Registra supervisor que resolvió
-8. Actualiza timestamp de resolución
+Una alerta GPS representa una condición detectada por las reglas implementadas; no debe interpretarse automáticamente como prueba de manipulación.
 
-**Estados finales:**
-- `JUSTIFICADA` - Explicación válida del oficial
-- `CERRADA` - Resuelta por supervisor
-
----
-
-## 5. MÓDULO DE PARTES SORPRESA
-
-### 5.1 Información de Parte
+## 9. Radio
 
-**Tarjeta muestra:**
-- Número de parte (primeros 8 caracteres del ID)
-- ID del oficial asignado
-- Ícono de estado (🆕 NUEVO, 👁 LEÍDO, ✅ COMPLETADO, ⏰ VENCIDO)
-- Nombre del supervisor que generó el parte
-- Razón del parte sorpresa
-- Tiempo transcurrido desde creación
-- Respuesta del oficial (si existe)
+La aplicación utiliza entidades de radio para comunicación entre superficies.
 
-### 5.2 Estados del Parte
+La implementación contempla mensajes, canales, llamadas y componentes WebRTC/señalización presentes en el proyecto.
 
-**NUEVO** (Cyan)
-- Recién creado
-- No leído por el oficial
-- Pulso animado
+La disponibilidad de comunicación depende de la configuración del backend y de la conectividad.
 
-**LEÍDO** (Naranja)
-- Oficial ha visto el parte
-- Pendiente de completar
+## 10. Cámara y reportes
 
-**COMPLETADO** (Verde)
-- Oficial ha respondido
-- Muestra respuesta y coordenadas
+La superficie móvil declara permisos de cámara y contiene flujos de captura asociados a reportes.
 
-**VENCIDO** (Rojo)
-- Más de 2 horas sin completar
-- Requiere atención inmediata
+En un dispositivo real, Android puede solicitar permisos antes de permitir la captura.
 
-### 5.3 Tiempo de Respuesta
+## 11. Solución de problemas
 
-El sistema muestra:
-- Tiempo en formato `Xh Ym` o `Xm`
-- Color rojo si está vencido
-- Badge pulsante para pendientes
+### No hay sesión
 
----
+Comprueba las credenciales de Supabase y el estado del usuario administrativo.
 
-## 6. MÓDULO DE OFICIALES
+### No aparece una misión
 
-### 6.1 Vista de Grid
+Comprueba conectividad, sesión, rol y datos disponibles en Supabase.
 
-**Disposición:**
-- Grid de 3 columnas
-- Tarjetas con efecto hover
-- Glow según grupo (Cyan=Alfa, Rosa=Bravo)
+### No se actualiza la ubicación
 
-### 6.2 Información de Oficial
+Comprueba GPS activo, permisos de ubicación, permiso de segundo plano cuando corresponda, restricciones de batería y conectividad.
 
-**Cabecera:**
-- Ícono circular con símbolo de grupo (⍺ o β)
-- ID del oficial
-- Grado (Oficial III a Capitán)
+### No llegan notificaciones
 
-**Datos:**
-- Nombre completo
-- Grupo asignado (ALFA/BRAVO)
-- Reo bajo custodia (si aplica)
+Comprueba el permiso de notificaciones y el estado del servicio Android.
 
-**Último Reporte:**
-- Ubicación actual
-- Nivel de batería con color:
-  - Verde: >50%
-  - Naranja: 20-50%
-  - Rojo: <20%
-- Badge de estado (NORMAL/ALERTA/CRÍTICO)
+### Una operación devuelve un error de Supabase
 
-### 6.3 Grados Disponibles
+Revisa primero la respuesta del backend y las políticas de acceso configuradas. El cliente no puede compensar una política RLS incorrecta.
 
-1. Oficial III
-2. Oficial II
-3. Oficial I
-4. Suboficial
-5. Sargento
-6. Teniente
-7. Capitán
+## 12. Estado del manual
 
----
+Este documento sustituye al manual histórico de SCCP Command Center v1.0. El código actual conserva elementos de aquella etapa, pero la arquitectura pública ahora incluye las superficies DTEX y los servicios móviles correspondientes.
 
-## 7. FUNCIONES AVANZADAS
+Para evolución técnica, consultar:
 
-### 7.1 Actualización Automática
-
-**Suscripción en Tiempo Real:**
-- Cambios en `monitoreo_reportes`
-- Nuevas inconsistencias
-- Actualización automática de contadores
-
-### 7.2 Sistema de Colores
-
-**Códigos de Color:**
-- 🟢 Verde (#00FF88): Normal/OK
-- 🟡 Naranja (#FFAA00): Alerta/Atención
-- 🔴 Rojo (#FF3B3B): Crítico/Urgente
-- 🔵 Cyan (#00FFD1): Activo/Primario
-- 🟣 Rosa (#FF006E): Secundario/Especial
-
-### 7.3 Efectos Visuales
-
-**Hover:**
-- Glow aumentado en tarjetas
-- Borde más brillante
-- Transición suave (200ms)
-
-**Pulse:**
-- Shimmer en badges críticos
-- Ícono de seguridad en login
-- Duración: 1.5-2 segundos
-
-### 7.4 Atajos de Teclado
-
-- `Ctrl + R` - Actualizar datos
-- `Esc` - Cerrar modales
-- `Enter` - Confirmar en formularios
-
----
-
-## 8. RESOLUCIÓN DE PROBLEMAS
-
-### 8.1 No puedo iniciar sesión
-
-**Verificar:**
-- Email correcto (debe estar en tabla `allowed_admins`)
-- PIN de 4 dígitos
-- Campo `activo = true` en la base de datos
-- Conexión a Supabase
-
-### 8.2 Los datos no se actualizan
-
-**Soluciones:**
-1. Presionar botón de actualización (⟳)
-2. Verificar conexión a internet
-3. Revisar configuración de Supabase Realtime
-4. Refrescar página (F5)
-
-### 8.3 El PIN no funciona
-
-**Causas comunes:**
-- PIN incorrecto (verificar en base de datos)
-- Campo `pin_seguridad` no coincide
-- Debe ser exactamente 4 dígitos numéricos
-
-### 8.4 Tarjetas no muestran información
-
-**Revisar:**
-- Datos en tablas de Supabase
-- Políticas de seguridad (RLS)
-- Console del navegador (F12) para errores
-
-### 8.5 Rendimiento lento
-
-**Optimizaciones:**
-- Limpiar caché del navegador
-- Cerrar pestañas innecesarias
-- Reducir animaciones en configuración
-- Actualizar navegador a última versión
-
----
-
-## 📞 SOPORTE TÉCNICO
-
-**En caso de problemas persistentes:**
-
-1. Revisar logs del navegador (F12 → Console)
-2. Verificar configuración de Supabase
-3. Comprobar permisos de base de datos
-4. Validar estructura de tablas
-
----
-
-**Versión del Manual:** 1.0  
-**Última Actualización:** 2024  
-**Sistema:** SCCP Command Center WebApp
+- `documentation/PROJECT_MEMORY.md`
+- `documentation/DEVLOG.md`
+- `documentation/CHANGELOG_PUBLIC.md`

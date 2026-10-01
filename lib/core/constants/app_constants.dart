@@ -5,7 +5,7 @@ class AppConstants {
   static const String appName = 'SCCP MONITOREO';
   static const String appVersion = '2.0.0';
 
-  // COLORES TRON LEGACY
+  // PALETA DE INTERFAZ
   static const Color neonCyan = Color(0xFF00F3FF);
   static const Color neonPink = Color(0xFFFF0080);
   static const Color neonOrange = Color(0xFFFF6600);
@@ -62,11 +62,11 @@ class AppConstants {
   // SUPABASE
   static const String supabaseUrl = Env.supabaseUrl;
   static const String supabaseAnonKey = Env.supabaseAnonKey;
-  // TABLAS - CORREGIDAS SEGÚN SCHEMA
+  // TABLAS
   static const String tableOficiales =
-      'oficiales'; // ❌ ERA: 'oficiales_maestro'
+      'oficiales';
   static const String tableMonitoreo =
-      'monitoreo_reportes'; // ❌ ERA: 'monitoreoreportes'
+      'monitoreo_reportes';
   static const String tableInconsistencias = 'inconsistencias';
   static const String tablePartes = 'partes_sorpresa';
   static const String tableAdmins = 'allowed_admins';

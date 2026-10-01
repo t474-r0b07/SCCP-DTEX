@@ -63,14 +63,14 @@ SCCP ECOSYSTEM
 ```
 MODULE                   SUPERFICIE     ESTADO     DESCRIPCIÓN
 ──────────────────────   ──────────    ────────   ──────────────────────────────────
-dashboard/               WebApp        ✅ LIVE    4 metrics · alerts · navigation
-inconsistencias/         WebApp        ✅ LIVE    Filters · PIN resolution · audit
-partes_sorpresa/         WebApp        ✅ LIVE    States · expiration · responses
-oficiales/               WebApp        ✅ LIVE    ALFA/BRAVO grid · telemetry · glow
-auth/                    WebApp        ✅ LIVE    Shuffled PinPad · login logs · roles
-realtime/                WebApp        ✅ LIVE    Supabase subscriptions · <1s latency
-dtex_custodio/           Android       ✅ LIVE    GPS · reports · radio · offline mode
-dtex_supervisor/         Android       ✅ LIVE    Mobile command · alerts · live map
+dashboard/               WebApp        IMPLEMENTADO    4 metrics · alerts · navigation
+inconsistencias/         WebApp        IMPLEMENTADO    Filters · PIN resolution · audit
+partes_sorpresa/         WebApp        IMPLEMENTADO    States · expiration · responses
+oficiales/               WebApp        IMPLEMENTADO    ALFA/BRAVO grid · telemetry · glow
+auth/                    WebApp        IMPLEMENTADO    Shuffled PinPad · login logs · roles
+realtime/                WebApp        IMPLEMENTADO    Supabase subscriptions · <1s latency
+dtex_custodio/           Android       IMPLEMENTADO  GPS · reports · radio · telemetría
+dtex_supervisor/         Android       IMPLEMENTADO  Mobile command · alerts · live map
 ```
 
 ---
@@ -106,6 +106,16 @@ UI / UX
 
 ---
 
+## `> cat field_notes.txt`
+
+> Este repositorio documenta una experiencia real de construcción: una aplicación que creció desde una interfaz web táctica hasta un sistema con dos superficies Android, autenticación, Supabase, tiempo real, seguimiento GPS y alertas operativas.
+>
+> El código conserva decisiones de distintas etapas del proyecto. Algunas son deliberadas; otras forman parte de la deuda técnica. Por eso el estado público se mantiene como **desarrollo / testing**.
+>
+> La intención es mostrar qué se construyó, qué problemas aparecieron y cómo se fueron resolviendo, no presentar el proyecto como si hubiera nacido terminado.
+
+---
+
 ## `> cat threat_model.txt`
 
 ```
@@ -113,9 +123,9 @@ VECTOR DE ATAQUE      MITIGACIÓN
 ────────────────     ───────────────────────────────────────
 GPS Spoofing    →  Inconsistent coordinate detection
 Shoulder Surf   →  Random shuffle PinPad on every use
-Unauth access   →  Dual factor: Email + PIN · allowed_admins
+Unauth access   →  Supabase Auth + allowlist de administradores + PIN para funciones de director
 Escalation      →  Strict SUPERVISOR / DIRECTOR roles
-VPN / Proxy     →  Network interface fingerprinting
+Señal GPS       →  Validación de precisión, saltos, velocidad y ubicación simulada
 Traceability    →  Full audit trail with timestamps
 ```
 
@@ -130,6 +140,8 @@ Arquitectura:            Web + 2 superficies Android
 Aplicaciones Android:   2 (Custodio · Supervisor)
 Backend:                 Supabase · PostgreSQL · Realtime
 Estado público:         desarrollo / testing
+Versión declarada:      2.0.0
+Modelo de entrega:      prototipo funcional / laboratorio
 ```
 
 ---
@@ -149,7 +161,7 @@ git clone https://github.com/t474-r0b07/SCCP-DTEX.git
 cd SCCP-DTEX
 flutter pub get
 
-# Configura las credenciales → lib/core/constants/app_constants.dart
+# Configuración de credenciales mediante variables de compilación
 
 # WebApp
 flutter run -d chrome --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...

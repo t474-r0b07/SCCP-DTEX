@@ -1,239 +1,171 @@
-# 🎯 SCCP COMMAND CENTER - GUÍA DE COMPILACIÓN
+# SCCP-DTEX — Guía de instalación
 
-## 📋 PREREQUISITOS
+## Estado del repositorio
 
-1. **Flutter SDK** instalado (versión >= 3.0.0)
-   - Descarga desde: https://flutter.dev/docs/get-started/install
-   - Verifica con: `flutter --version`
+Este repositorio se publica como **prototipo funcional / laboratorio en desarrollo y testing**. La configuración de backend y las políticas de seguridad dependen del proyecto Supabase utilizado para la instalación.
 
-2. **Cuenta de Supabase**
-   - Crea una cuenta en: https://supabase.com
-   - Crea un nuevo proyecto
+## Requisitos
 
-## 🔧 CONFIGURACIÓN INICIAL
+- Flutter SDK compatible con Dart `>=3.0.0 <4.0.0`.
+- Android SDK para las superficies móviles.
+- Una instancia de Supabase para backend, autenticación y datos.
+- Chrome para ejecutar la superficie web durante desarrollo.
 
-### 1. Configurar Supabase
-
-Edita el archivo `lib/core/constants/app_constants.dart`:
-
-```dart
-// Líneas 42-43
-static const String supabaseUrl = 'https://TU-PROYECTO.supabase.co';
-static const String supabaseAnonKey = 'TU-ANON-KEY-AQUI';
-```
-
-Para obtener estas credenciales:
-1. Ve a tu proyecto en Supabase
-2. Settings > API
-3. Copia "Project URL" y "anon/public key"
-
-### 2. Instalar Dependencias
+Comprueba el entorno con:
 
 ```bash
+flutter doctor
+flutter --version
+```
+
+## 1. Obtener el proyecto
+
+```bash
+git clone https://github.com/t474-r0b07/SCCP-DTEX.git
 cd SCCP-DTEX
 flutter pub get
 ```
 
-## 🚀 COMPILACIÓN Y EJECUCIÓN
+## 2. Configurar Supabase
 
-### Para Web (Recomendado)
+El proyecto recibe las credenciales mediante variables de compilación. No las escribas directamente en el código fuente.
 
-```bash
-# Modo desarrollo
-flutter run -d chrome
-
-# Modo producción
-flutter build web --release
-```
-
-Los archivos compilados estarán en `build/web/`
-
-### Para Windows
+### Web
 
 ```bash
-flutter build windows --release
+flutter run -d chrome \
+  --dart-define=SUPABASE_URL=https://TU-PROYECTO.supabase.co \
+  --dart-define=SUPABASE_ANON_KEY=TU-CLAVE-ANON
 ```
 
-### Para macOS
+### Android
+
+Aplica las mismas variables `--dart-define` al comando de ejecución o compilación correspondiente.
+
+## 3. Ejecutar la superficie web
 
 ```bash
-flutter build macos --release
+flutter run -d chrome \
+  --dart-define=SUPABASE_URL=https://TU-PROYECTO.supabase.co \
+  --dart-define=SUPABASE_ANON_KEY=TU-CLAVE-ANON
 ```
 
-### Para Linux
+La entrada principal es `lib/main.dart`.
+
+## 4. Ejecutar DTEX Custodio
 
 ```bash
-flutter build linux --release
+flutter run \
+  --flavor dtex_custodio \
+  --target lib/main_custodio.dart \
+  --dart-define=SUPABASE_URL=https://TU-PROYECTO.supabase.co \
+  --dart-define=SUPABASE_ANON_KEY=TU-CLAVE-ANON
 ```
 
-## 📊 ESTRUCTURA DE BASE DE DATOS REQUERIDA
+Esta superficie utiliza funciones de campo como ubicación, telemetría, alertas y notificaciones. Android puede solicitar permisos adicionales durante la ejecución.
 
-### Tabla: oficiales_maestro
+## 5. Ejecutar DTEX Supervisor
 
-```sql
-CREATE TABLE oficiales_maestro (
-  id_oficial TEXT PRIMARY KEY,
-  nombre_oficial TEXT NOT NULL,
-  grupo TEXT NOT NULL,
-  grado TEXT DEFAULT '1',
-  turno TEXT,
-  reo_asignado TEXT,
-  imei TEXT,
-  activo BOOLEAN DEFAULT true,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-);
+```bash
+flutter run \
+  --flavor dtex_supervisor \
+  --target lib/main_dtex_supervisor.dart \
+  --dart-define=SUPABASE_URL=https://TU-PROYECTO.supabase.co \
+  --dart-define=SUPABASE_ANON_KEY=TU-CLAVE-ANON
 ```
 
-### Tabla: monitoreoreportes
+## 6. Builds
 
-```sql
-CREATE TABLE monitoreoreportes (
-  id_reporte TEXT PRIMARY KEY,
-  id_oficial_ref TEXT REFERENCES oficiales_maestro(id_oficial),
-  nombre_oficial TEXT,
-  reo_asignado TEXT,
-  ubicacion_actual TEXT,
-  latitud DOUBLE PRECISION,
-  longitud DOUBLE PRECISION,
-  distancia_metros DOUBLE PRECISION,
-  estado_alerta TEXT DEFAULT 'NORMAL',
-  nivel_bateria INTEGER,
-  gps_real BOOLEAN DEFAULT true,
-  movimiento BOOLEAN,
-  parte_novedad TEXT,
-  fecha_hora TIMESTAMP DEFAULT NOW(),
-  imei TEXT,
-  grupo TEXT
-);
+### Web
+
+```bash
+flutter build web --release \
+  --dart-define=SUPABASE_URL=https://TU-PROYECTO.supabase.co \
+  --dart-define=SUPABASE_ANON_KEY=TU-CLAVE-ANON
 ```
 
-### Tabla: inconsistencias
+### Android Custodio
 
-```sql
-CREATE TABLE inconsistencias (
-  id TEXT PRIMARY KEY,
-  id_oficial_ref TEXT REFERENCES oficiales_maestro(id_oficial),
-  nombre_oficial TEXT,
-  tipo_alerta TEXT NOT NULL,
-  detalle TEXT,
-  resuelta BOOLEAN DEFAULT false,
-  created_at TIMESTAMP DEFAULT NOW(),
-  resuelta_por TEXT,
-  fecha_resolucion TIMESTAMP
-);
+```bash
+flutter build apk \
+  --flavor dtex_custodio \
+  --target lib/main_custodio.dart \
+  --dart-define=SUPABASE_URL=https://TU-PROYECTO.supabase.co \
+  --dart-define=SUPABASE_ANON_KEY=TU-CLAVE-ANON
 ```
 
-### Tabla: partes_sorpresa
+### Android Supervisor
 
-```sql
-CREATE TABLE partes_sorpresa (
-  id_parte TEXT PRIMARY KEY,
-  id_oficial_ref TEXT REFERENCES oficiales_maestro(id_oficial),
-  nombre_oficial TEXT,
-  texto_origen TEXT,
-  texto_generado TEXT,
-  audio_url TEXT,
-  audio_waveform TEXT,
-  similitud DOUBLE PRECISION,
-  validado BOOLEAN DEFAULT false,
-  validado_por TEXT,
-  fecha_hora TIMESTAMP DEFAULT NOW(),
-  fecha_validacion TIMESTAMP
-);
+```bash
+flutter build apk \
+  --flavor dtex_supervisor \
+  --target lib/main_dtex_supervisor.dart \
+  --dart-define=SUPABASE_URL=https://TU-PROYECTO.supabase.co \
+  --dart-define=SUPABASE_ANON_KEY=TU-CLAVE-ANON
 ```
 
-### Tabla: allowed_admins
+> Los builds de release todavía utilizan la configuración de firma indicada en el proyecto. Esto no debe interpretarse como configuración de distribución de producción.
 
-```sql
-CREATE TABLE allowed_admins (
-  id_admin TEXT PRIMARY KEY,
-  nombre_admin TEXT NOT NULL,
-  email TEXT UNIQUE NOT NULL,
-  perfil TEXT DEFAULT 'SUPERVISOR',
-  activo BOOLEAN DEFAULT true,
-  created_at TIMESTAMP DEFAULT NOW()
-);
-```
+## 7. Backend esperado
 
-## 🔒 POLÍTICAS DE SEGURIDAD (RLS)
+El código actual utiliza Supabase para autenticación y acceso a datos. Entre las entidades y vistas referenciadas por la aplicación se encuentran:
 
-Habilita Row Level Security en todas las tablas:
+- `allowed_admins`
+- `login_logs`
+- entidades DTEX de misiones, destinos, extensiones y tracking
+- `radio_mensajes`
+- `radio_llamadas`
+- `inconsistencias`
+- `partes_sorpresa`
+- entidades de oficiales/custodios
+- vistas operativas de inconsistencias, alertas y telemetría
 
-```sql
-ALTER TABLE oficiales_maestro ENABLE ROW LEVEL SECURITY;
-ALTER TABLE monitoreoreportes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE inconsistencias ENABLE ROW LEVEL SECURITY;
-ALTER TABLE partes_sorpresa ENABLE ROW LEVEL SECURITY;
-ALTER TABLE allowed_admins ENABLE ROW LEVEL SECURITY;
+La definición exacta del esquema y sus políticas debe mantenerse en el proyecto Supabase que acompañe a cada instalación. **No se deben copiar esquemas antiguos de esta guía como si fueran el contrato actual del backend.**
 
--- Ejemplo de política de lectura (ajusta según tus necesidades)
-CREATE POLICY "Enable read for authenticated users" 
-ON oficiales_maestro FOR SELECT 
-TO authenticated 
-USING (true);
-```
+## 8. Permisos Android
 
-## 🎨 PERSONALIZACIÓN
+La aplicación declara permisos relacionados con ubicación precisa y en segundo plano, cámara, servicio foreground, notificaciones, conectividad, wakelock, optimización de batería y overlay del sistema.
 
-### Cambiar Colores Neón
+Concede únicamente los permisos necesarios para la superficie que estés probando y revisa el comportamiento de Android en el dispositivo real.
 
-Edita `lib/core/constants/app_constants.dart`:
+## 9. Problemas frecuentes
 
-```dart
-static const Color neonCyan = Color(0xFF00FFD1);  // Color principal
-static const Color neonPink = Color(0xFFFF006B);  // Grupo Bravo
-```
+### Supabase no inicializa
 
-### Cambiar Posición Inicial del Mapa
+Comprueba que `SUPABASE_URL` y `SUPABASE_ANON_KEY` hayan sido proporcionados con `--dart-define`.
 
-Edita `lib/core/constants/app_constants.dart`:
+### Login rechazado
 
-```dart
-static const double defaultLatitude = -16.5000;  // Tu latitud
-static const double defaultLongitude = -68.1500; // Tu longitud
-static const double defaultZoom = 12.0;          // Zoom inicial
-```
+Comprueba la autenticación de Supabase y la configuración de `allowed_admins`. El acceso administrativo no depende únicamente de que exista una sesión autenticada.
 
-## 🐛 SOLUCIÓN DE PROBLEMAS
+### El tracking no funciona
 
-### Error: "Failed to load network image"
+Revisa permisos de ubicación, estado del GPS, restricciones de batería y permisos de ejecución en segundo plano.
 
-El mapa requiere conexión a internet. Verifica tu conexión.
+### El mapa no muestra datos
 
-### Error: "Supabase exception"
+Comprueba conectividad, credenciales de Supabase y disponibilidad de los datos que consume la vista.
 
-1. Verifica que las credenciales de Supabase sean correctas
-2. Asegúrate de que las tablas existan
-3. Verifica que RLS esté configurado correctamente
+## 10. Antes de considerar una instalación de producción
 
-### Error: "Font asset not found"
+Este repositorio no declara una configuración de producción certificada. Antes de cualquier despliegue real deben revisarse, como mínimo:
 
-Ejecuta `flutter pub get` para asegurar que los assets se copien correctamente.
+- políticas RLS efectivas;
+- permisos y roles de Supabase;
+- almacenamiento y exposición de archivos;
+- gestión de secretos;
+- firma Android;
+- permisos de segundo plano;
+- pruebas automatizadas;
+- recuperación ante errores de red;
+- logging y observabilidad;
+- comportamiento en dispositivos Android reales.
 
-### Rendimiento lento
+## Referencias
 
-1. Usa modo release: `flutter run --release -d chrome`
-2. Reduce el intervalo de refresco en `app_constants.dart`
+- `documentation/PROJECT_MEMORY.md` — evolución técnica.
+- `documentation/DEVLOG.md` — problemas y decisiones.
+- `documentation/CHANGELOG_PUBLIC.md` — estado público.
+- `MANUAL_USUARIO.md` — recorrido funcional.
 
-## 📞 SOPORTE
-
-Para reportar problemas o sugerencias, contacta con el equipo de desarrollo.
-
-## ✅ CHECKLIST DE DESPLIEGUE
-
-- [ ] Configurar credenciales de Supabase
-- [ ] Crear todas las tablas en la base de datos
-- [ ] Configurar políticas RLS
-- [ ] Insertar datos de prueba
-- [ ] Probar login
-- [ ] Verificar que el mapa carga correctamente
-- [ ] Confirmar que los marcadores aparecen
-- [ ] Probar alertas y notificaciones
-- [ ] Compilar en modo release
-- [ ] Desplegar en servidor web (opcional)
-
----
-
-**Versión:** 2.0.0
-**Última actualización:** Febrero 2026
+**Versión declarada:** 2.0.0

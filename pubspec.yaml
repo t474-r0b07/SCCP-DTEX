@@ -16,8 +16,6 @@ dependencies:
   
   # Backend
   supabase_flutter: ^2.3.4
-  sccp_shared:
-    path: ../sccp_suite/packages/sccp_shared
   
   # Map
   flutter_map: ^6.1.0

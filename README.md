@@ -172,7 +172,7 @@ flutter run --flavor dtex_custodio --target lib/main_custodio.dart
 # Android Supervisor
 flutter run --flavor dtex_supervisor --target lib/main_dtex_supervisor.dart
 
-# Production build
+# Builds de prueba / release
 flutter build web --release
 flutter build apk --flavor dtex_custodio --target lib/main_custodio.dart
 flutter build apk --flavor dtex_supervisor --target lib/main_dtex_supervisor.dart

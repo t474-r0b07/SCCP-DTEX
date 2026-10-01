@@ -683,44 +683,11 @@ class DtexRepository {
 
   Future<List<DtexPolicia>> getPoliciaAlfa() async {
     try {
-      // Verificar configuración de Supabase
-      _logConfig();
-
-      // Verificar autenticación
-      final user = _supabase.auth.currentUser;
-      if (kDebugMode) {
-        _log(
-            '🔑 [DTEX] Auth status: ${user != null ? "Authenticated" : "Not authenticated"}');
-        if (user != null) {
-          _log('👤 [DTEX] User: ${user.email}');
-        }
-      }
-
-      // PROBAR 1: Consulta sin filtros
-      if (kDebugMode) _log('🔄 [DTEX] Consultando grupo_alfa SIN FILTROS...');
-      final responseRaw = await _supabase.from('grupo_alfa').select('*');
-
-      if (kDebugMode) {
-        _log('✅ [DTEX] Response RAW: ${responseRaw.toString()}');
-        _log('📊 [DTEX] Response RAW type: ${responseRaw.runtimeType}');
-        _log('📊 [DTEX] Response RAW length: ${(responseRaw as List).length}');
-      }
-
-      // PROBAR 2: Consulta con filtro activo=true
-      if (kDebugMode) {
-        _log('🔄 [DTEX] Consultando grupo_alfa CON FILTRO activo=true...');
-      }
       final response = await _supabase
           .from('grupo_alfa')
           .select()
           .eq('activo', true)
           .order('grado, nombre', ascending: true);
-
-      if (kDebugMode) {
-        _log('✅ [DTEX] Response grupo_alfa: ${response.toString()}');
-        _log('📊 [DTEX] Response type: ${response.runtimeType}');
-        _log('📊 [DTEX] Response length: ${(response as List).length}');
-      }
 
       return (response as List)
           .map((json) => DtexPolicia.fromJson(json))
@@ -733,17 +700,11 @@ class DtexRepository {
 
   Future<List<DtexPolicia>> getPoliciaBravo() async {
     try {
-      
       final response = await _supabase
           .from('grupo_bravo')
           .select()
           .eq('activo', true)
           .order('grado, nombre', ascending: true);
-
-      if (kDebugMode) {
-        _logSupabase('Response grupo_bravo: ${response.toString()}');
-        _logSupabase('Response type: ${response.runtimeType}');
-      }
 
       return (response as List)
           .map((json) => DtexPolicia.fromJson(json))

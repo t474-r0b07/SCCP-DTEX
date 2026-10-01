@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sccp_shared/sccp_shared.dart';
 import 'env.dart';
 
 class AppConstants {
@@ -74,8 +73,8 @@ static const String supabaseAnonKey = Env.supabaseAnonKey;
   static const String tableReos = 'reos';
   static const String tablePartesOficiales = 'partes_oficiales';
   static const String tableLoginLogs = 'login_logs';
-  static const String tableRadioMensajes = SharedDb.tableRadioMensajes;
-  static const String tableRadioLlamadas = SharedDb.tableRadioLlamadas;
+  static const String tableRadioMensajes = 'radio_mensajes';
+  static const String tableRadioLlamadas = 'radio_llamadas';
   static const String viewInconsistenciasLogicas =
       'v_webapp_inconsistencias_logicas';
   static const String viewAlertasOperativas = 'v_webapp_alertas_operativas';

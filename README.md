@@ -152,7 +152,7 @@ flutter pub get
 # Configura las credenciales → lib/core/constants/app_constants.dart
 
 # WebApp
-flutter run -d chrome
+flutter run -d chrome --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...
 
 # Android Custodio
 flutter run --flavor dtex_custodio --target lib/main_custodio.dart

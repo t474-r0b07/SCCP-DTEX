@@ -17,28 +17,12 @@ class DtexRepository {
     }
   }
 
-  void _logSupabase(String message) {
-    if (kDebugMode) {
-      debugPrint('🔗 [SUPABASE] $message');
-    }
-  }
-
   // ========================================
   // DESTINOS
   // ========================================
 
   Future<List<DtexDestino>> getDestinos() async {
     try {
-      // Verificar autenticación
-      final user = _supabase.auth.currentUser;
-      if (kDebugMode) {
-        _log(
-            '🔑 [DTEX] Auth status (destinos): ${user != null ? "Authenticated" : "Not authenticated"}');
-        if (user != null) {
-          _log('👤 [DTEX] User (destinos): ${user.email}');
-        }
-      }
-
       final response = await _supabase
           .from('dtex_destinos')
           .select()
@@ -749,8 +733,7 @@ class DtexRepository {
 
   Future<List<DtexPolicia>> getPoliciaBravo() async {
     try {
-      if (kDebugMode) _logSupabase('Consultando grupo_bravo...');
-
+      
       final response = await _supabase
           .from('grupo_bravo')
           .select()

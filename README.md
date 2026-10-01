@@ -10,8 +10,8 @@
           · · · · · · · · · · ·
 
   SIGNAL ORIGIN: [REDACTED]
-  LAST FIX:      44.9717° N, 37.7492° E
-  STATUS:        ⚠ SPOOFED
+  LAST FIX:      coordenadas del reto
+  STATUS:        ⚠ ANOMALÍA DETECTADA
 ```
 
 ---
@@ -19,8 +19,8 @@
 ```bash
 $ cat /etc/mission
 > Sistema de Control y Custodia Policial
-> Module: DTEX — External Operations
-> Status: [OPERATIONAL] ██████████ 100%
+> Módulo: DTEX — Operaciones Externas
+> Estado: [DESARROLLO / TESTING] ████████░░ 80%
 > Surfaces: WebApp · Android Custodio · Android Supervisor
 > Latency: <1s · Real-time · Level: TACTICAL
 ```
@@ -29,10 +29,10 @@ $ cat /etc/mission
 
 ## `> ./overview.sh`
 
-**SCCP Command Center** — tactical real-time law enforcement monitoring platform.  
-Built from the dev side. Designed thinking about the other side.
+**SCCP Command Center** — plataforma de coordinación y monitoreo operativo en tiempo real.  
+Construida desde el lado del desarrollo, pensando también en el lado que intenta romperla.
 
-Three surfaces. One operational truth:
+Tres superficies. Una misma fuente de datos:
 
 ```
 SCCP ECOSYSTEM
@@ -42,8 +42,8 @@ SCCP ECOSYSTEM
 │   └── DTEX Supervisor → Android · mobile command · coordination · alerts
 │
 └── SCCP MOBILE (specialized armor)
-    └── Home arrest monitoring
-        → Voice · GPS spoofing · geofencing · telemetry detection
+    └── Monitoreo domiciliario
+        → Voz · detección de spoofing GPS · geofencing · telemetría
         → github.com/t474-r0b07/SCCP-Mobile
 ```
 
@@ -51,17 +51,17 @@ SCCP ECOSYSTEM
 
 ## `> cat demo.log`
 
-| Video | Description |
+| Video | Descripción |
 |-------|-------------|
-| [▶ DEMO — Command Center](https://youtu.be/rMHYnaqIVr0?si=-GGM5YVxFRnkV53z) | Tactical HUD overview |
-| [▶ DEMO — Modules & Flow](https://youtu.be/EmtY-lQay2o?si=sdV2ma88XMLw34dN) | Inconsistencies · Reports · Officers |
+| [▶ DEMO — Command Center](https://youtu.be/rMHYnaqIVr0?si=-GGM5YVxFRnkV53z) | Vista general del HUD táctico |
+| [▶ DEMO — Modules & Flow](https://youtu.be/EmtY-lQay2o?si=sdV2ma88XMLw34dN) | Inconsistencias · Partes · Oficiales |
 
 ---
 
 ## `> ls -la modules/`
 
 ```
-MODULE                   SURFACE       STATUS     DESCRIPTION
+MODULE                   SUPERFICIE     ESTADO     DESCRIPCIÓN
 ──────────────────────   ──────────    ────────   ──────────────────────────────────
 dashboard/               WebApp        ✅ LIVE    4 metrics · alerts · navigation
 inconsistencias/         WebApp        ✅ LIVE    Filters · PIN resolution · audit
@@ -81,17 +81,17 @@ dtex_supervisor/         Android       ✅ LIVE    Mobile command · alerts · l
 FRONTEND
   Flutter Web (Dart)     → WebApp Command Center
   Flutter Android (Dart) → DTEX Custodio + Supervisor
-  GetX                   → reactive state management
+  GetX                   → gestión de estado reactiva
   flutter_animate        → fluid animations
   flutter_map            → CartoDB Dark Matter tiles
 
 BACKEND
   Supabase — PostgreSQL + Realtime
-  Custom auth · allowed_admins table
-  RLS policies · audit logs
-  Supabase Storage       → photos · reports
+  Autenticación propia · tabla allowed_admins
+  Políticas RLS · registros de auditoría
+  Supabase Storage       → fotos · partes
 
-ARCHITECTURE
+ARQUITECTURA
   Clean Architecture
   ├─ Presentation  →  Views + GetX Controllers
   ├─ Domain        →  Entities + Use Cases
@@ -109,8 +109,8 @@ UI / UX
 ## `> cat threat_model.txt`
 
 ```
-ATTACK VECTOR      MITIGATION
-──────────────     ───────────────────────────────────────
+VECTOR DE ATAQUE      MITIGACIÓN
+────────────────     ───────────────────────────────────────
 GPS Spoofing    →  Inconsistent coordinate detection
 Shoulder Surf   →  Random shuffle PinPad on every use
 Unauth access   →  Dual factor: Email + PIN · allowed_admins
@@ -119,29 +119,26 @@ VPN / Proxy     →  Network interface fingerprinting
 Traceability    →  Full audit trail with timestamps
 ```
 
-> *Built with offensive thinking. Every feature is a countermeasure.*
+> *Construido con pensamiento ofensivo. Cada función responde a una amenaza concreta.*
 
 ---
 
-## `> cat metrics.txt`
+## `> cat project_snapshot.txt`
 
 ```
-Lines of code:          ~2,500
-Main views:             5
-Reusable widgets:       15+
-Real-time update:       <1 second
-Concurrent users:       100+
-Monitored officers:     500+
-Independent APKs:       2 (Custodio · Supervisor)
+Arquitectura:            Web + 2 superficies Android
+Aplicaciones Android:   2 (Custodio · Supervisor)
+Backend:                 Supabase · PostgreSQL · Realtime
+Estado público:         desarrollo / testing
 ```
 
 ---
 
 ## `> ls -la documentation/`
 
-- [`PROJECT_MEMORY.md`](./PROJECT_MEMORY.md) — From monolith to Android fork. 13 weeks.
-- [`DEVLOG.md`](./DEVLOG.md) — Technical debt, field lessons, real decisions.
-- [`CHANGELOG_PUBLIC.md`](./CHANGELOG_PUBLIC.md) — Version history and operational deployment.
+- [`PROJECT_MEMORY.md`](./PROJECT_MEMORY.md) — Del monolito a la arquitectura móvil bifurcada. 13 semanas.
+- [`DEVLOG.md`](./DEVLOG.md) — Deuda técnica, lecciones de campo y decisiones reales.
+- [`CHANGELOG_PUBLIC.md`](./CHANGELOG_PUBLIC.md) — Historial de versiones y estado del despliegue.
 
 ---
 
@@ -152,7 +149,7 @@ git clone https://github.com/t474-r0b07/SCCP-DTEX.git
 cd SCCP-DTEX
 flutter pub get
 
-# Set credentials → lib/core/constants/app_constants.dart
+# Configura las credenciales → lib/core/constants/app_constants.dart
 
 # WebApp
 flutter run -d chrome
@@ -174,9 +171,9 @@ flutter build apk --flavor dtex_supervisor --target lib/main_dtex_supervisor.dar
 ## `> cat roadmap.txt`
 
 ```
-[ PHASE 2 ]  Inmates module · Mapbox · PDF export
-[ PHASE 3 ]  KPI dashboard · Supervisor chat · Multi-tenant
-[ PHASE 4 ]  ML analytics · Public API · iOS support
+[ FASE 2 ]  Módulo de internos · Mapbox · exportación PDF
+[ FASE 3 ]  Dashboard KPI · chat de supervisión · multi-tenant
+[ FASE 4 ]  Analítica ML · API pública · soporte iOS
 ```
 
 ---
@@ -192,7 +189,7 @@ flutter build apk --flavor dtex_supervisor --target lib/main_dtex_supervisor.dar
 
 ---
 
-> `[!]` · [`anomaly in position data`](./CHALLENGE.md) · coordinates unverified
+> `[!]` · [`anomaly in position data`](./CHALLENGE.md) · coordenadas sin verificar
 
 ---
 
@@ -212,8 +209,8 @@ flutter build apk --flavor dtex_supervisor --target lib/main_dtex_supervisor.dar
 
 ```
 © t474-r0b07 · All Rights Reserved
-This code is not open source.
-Viewing ≠ permission to use, copy, or distribute.
+Este código no es open source.
+Ver ≠ permiso para usar, copiar o distribuir.
 ```
 
 ---
@@ -225,12 +222,12 @@ Viewing ≠ permission to use, copy, or distribute.
   The data was lying.
 
   The first documented large-scale GPS spoofing attack on civilian infrastructure.
-  The system trusted the signal. The signal was wrong.
+  El sistema confió en la señal. La señal era incorrecta.
 
-  This is why SCCP detects before it trusts.
+  Por eso SCCP detecta antes de confiar.
 
   >> https://www.maritime.dot.gov/msci/2017-005-black-sea-anomalous-gps-signals
 
-  Something in this README is also lying about its position.
-  Find it.
+  Algo en este README también está mintiendo sobre su posición.
+  Encuéntralo.
 -->

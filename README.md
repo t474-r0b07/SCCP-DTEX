@@ -148,9 +148,9 @@ Modelo de entrega:      prototipo funcional / laboratorio
 
 ## `> ls -la documentation/`
 
-- [`PROJECT_MEMORY.md`](./PROJECT_MEMORY.md) — Del monolito a la arquitectura móvil bifurcada. 13 semanas.
-- [`DEVLOG.md`](./DEVLOG.md) — Deuda técnica, lecciones de campo y decisiones reales.
-- [`CHANGELOG_PUBLIC.md`](./CHANGELOG_PUBLIC.md) — Historial de versiones y estado del despliegue.
+- [`documentation/PROJECT_MEMORY.md`](./documentation/PROJECT_MEMORY.md) — Evolución de la arquitectura y decisiones principales.
+- [`documentation/DEVLOG.md`](./documentation/DEVLOG.md) — Problemas encontrados, deuda técnica y decisiones reales.
+- [`documentation/CHANGELOG_PUBLIC.md`](./documentation/CHANGELOG_PUBLIC.md) — Historial técnico público y estado de las etapas.
 
 ---
 

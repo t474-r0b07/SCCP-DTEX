@@ -30,7 +30,7 @@ Para obtener estas credenciales:
 ### 2. Instalar Dependencias
 
 ```bash
-cd sccp_tactical
+cd SCCP-DTEX
 flutter pub get
 ```
 

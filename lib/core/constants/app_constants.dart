@@ -3,7 +3,7 @@ import 'env.dart';
 
 class AppConstants {
   static const String appName = 'SCCP MONITOREO';
-  static const String appVersion = '1.1.3';
+  static const String appVersion = '2.0.0';
 
   // COLORES TRON LEGACY
   static const Color neonCyan = Color(0xFF00F3FF);
@@ -61,7 +61,7 @@ class AppConstants {
 
   // SUPABASE
   static const String supabaseUrl = Env.supabaseUrl;
-static const String supabaseAnonKey = Env.supabaseAnonKey;
+  static const String supabaseAnonKey = Env.supabaseAnonKey;
   // TABLAS - CORREGIDAS SEGÚN SCHEMA
   static const String tableOficiales =
       'oficiales'; // ❌ ERA: 'oficiales_maestro'

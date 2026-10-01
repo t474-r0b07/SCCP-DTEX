@@ -23,15 +23,6 @@ class DtexRepository {
     }
   }
 
-  void _logConfig() {
-    if (kDebugMode) {
-      debugPrint('🌐 [SUPABASE] URL: ${AppConstants.supabaseUrl}');
-      debugPrint(
-          '🔑 [SUPABASE] Auth: ${_supabase.auth.currentUser?.email ?? "No user"}');
-      debugPrint('📊 [SUPABASE] Client initialized');
-    }
-  }
-
   // ========================================
   // DESTINOS
   // ========================================
@@ -153,8 +144,7 @@ class DtexRepository {
           .select('id_mision, codigo_otp')
           .single();
 
-      _log(
-          '✅ [DTEX] Misión creada: ${response['id_mision']} OTP: ${response['codigo_otp']}');
+      _log('✅ [DTEX] Misión creada: ${response['id_mision']}');
       return response['id_mision']?.toString();
     } catch (e) {
       _log('❌ [DTEX] Error creando misión: $e');
